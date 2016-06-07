@@ -286,10 +286,14 @@ def main():
 
         sys_logger.info('PyPXE successfully initialized and running!')
 
-        while map(lambda x: x.isAlive(), running_services):
-            sleep(1)
+        while True:
+            for status in running_services:
+                if status.isAlive():
+                    sleep(1)
+                else:
+                    raise RuntimeError
 
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, RuntimeError):
         sys.exit('\nShutting down PyPXE...\n')
 
 if __name__ == '__main__':

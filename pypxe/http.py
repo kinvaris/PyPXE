@@ -24,6 +24,7 @@ class HTTPD:
         self.mode_verbose = server_settings.get('mode_verbose', False) # verbose mode
         self.mode_debug = server_settings.get('mode_debug', False) # debug mode
         self.logger =  server_settings.get('logger', None)
+        self.handled_requests = 0
 
         # setup logger
         if self.logger == None:
@@ -99,8 +100,9 @@ class HTTPD:
 
     def listen(self):
         '''This method is the main loop that listens for requests.'''
-        while True:
+        while self.handled_requests == 0:
             conn, addr = self.sock.accept()
             client = threading.Thread(target = self.handle_request, args = (conn, addr))
             client.daemon = True;
             client.start()
+            self.handled_requests += 1
